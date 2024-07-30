@@ -1,0 +1,8 @@
+{
+    "name": "velo-jewel",
+    "version": "17.0.0",
+    "productName": "Velo Jewel",
+    "description": "Velo Jewel",
+    "main": "electron.prod.js",
+    "license": "MIT"
+}

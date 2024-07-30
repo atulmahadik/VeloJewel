@@ -2,13 +2,17 @@
     "name": "velo-jewel",
     "version": "17.0.0",
     "license": "MIT",
+    "main": "app.js",
     "scripts": {
         "ng": "ng",
         "start": "ng serve -o",
-        "build": "ng build",
+        "build": "ng build --base-href ./",
         "test": "ng test",
         "lint": "ng lint",
-        "e2e": "ng e2e"
+        "e2e": "ng e2e",
+        "electron": "electron .",
+        "electron-build": "ng build --base-href ./ && electron .",
+        "package:win": "npm run build && cross-var electron-packager dist $npm_package_name-$npm_package_version --out=packages --platform=win32 --overwrite "
     },
     "private": true,
     "dependencies": {
@@ -27,6 +31,7 @@
         "@fullcalendar/interaction": "^6.0.3",
         "@fullcalendar/timegrid": "^6.0.3",
         "chart.js": "^3.3.2",
+        "cross-var": "^1.1.0",
         "primeflex": "^3.3.1",
         "primeicons": "6.0.1",
         "primeng": "17.2.0",
@@ -41,6 +46,7 @@
         "@angular/cli": "^17.0.5",
         "@angular/compiler-cli": "^17.0.5",
         "@types/jasmine": "~4.3.1",
+        "electron": "^31.3.1",
         "jasmine-core": "~4.6.0",
         "karma": "~6.4.2",
         "karma-chrome-launcher": "~3.2.0",
