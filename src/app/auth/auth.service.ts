@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
@@ -8,7 +9,7 @@ export class AuthService {
   private isAuthenticated = false;
   private authSecretKey = 'Bearer Token';
 
-  constructor() { 
+  constructor(private router: Router) { 
     this.isAuthenticated = !!localStorage.getItem(this.authSecretKey);
   }
   
@@ -31,5 +32,6 @@ export class AuthService {
   logout(): void {
     localStorage.removeItem(this.authSecretKey);
     this.isAuthenticated = false;
+    this.router.navigateByUrl('/login')
   }
 }

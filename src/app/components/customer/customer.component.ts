@@ -35,19 +35,34 @@ export class CustomerComponent implements OnInit {
     ngOnInit() {
         this.productService.getCustomers().then(data => this.customers = data);
 
+        // this.cols = [
+        //     { field: 'name', header: 'Name'},
+        //     { field: 'address', header: 'Address' },
+        //     { field: 'mobileno', header: 'Mobile No' },
+        //     { field: 'subscriptionDate', header: 'Subscription Date' },
+        //     { field: 'renewalDate', header: 'Renewal Date' },
+        //     { field: 'callReason', header: 'Call Reason' },
+        //     { field: 'refferedBy', header: 'Reffered By' },
+        //     { field: 'commision', header: 'Commision' },
+        //     { field: 'ammountDueInAdvance', header: 'Amount Due In Advance' },
+        //     { field: 'amountDuePast', header: 'Amount Due Past' },
+        //     { field: 'amountPaid', header: 'Amount Paid' },
+        //     { field: 'amountPaidDate', header: 'Amount Paid Date' },
+        // ];
+
         this.cols = [
-            { field: 'name', header: 'Name' },
-            { field: 'address', header: 'Address' },
-            { field: 'mobileno', header: 'Mobile No' },
-            { field: 'subscriptionDate', header: 'Subscription Date' },
-            { field: 'renewalDate', header: 'Renewal Date' },
-            { field: 'callReason', header: 'Call Reason' },
-            { field: 'refferedBy', header: 'Reffered By' },
-            { field: 'commision', header: 'Commision' },
-            { field: 'ammountDueInAdvance', header: 'Amount Due In Advance' },
-            { field: 'amountDuePast', header: 'Amount Due Past' },
-            { field: 'amountPaid', header: 'Amount Paid' },
-            { field: 'amountPaidDate', header: 'Amount Paid Date' },
+            { field: 'name', header: 'Name', style: 'min-width: 130px', isSort: true },
+            { field: 'address', header: 'Address', style: 'min-width: 130px', isSort: true },
+            { field: 'mobileno', header: 'Mobile No', style: 'min-width: 130px', isSort: true },
+            { field: 'subscriptionDate', header: 'Subscription Date', style: 'min-width: 150px', isSort: true },
+            { field: 'renewalDate', header: 'Renewal Date', style: 'min-width: 130px', isSort: true },
+            { field: 'callReason', header: 'Call Reason', style: 'min-width: 130px', isSort: true },
+            { field: 'refferedBy', header: 'Reffered By', style: 'min-width: 130px', isSort: true },
+            { field: 'commision', header: 'Commision', style: 'min-width: 130px', isSort: true },
+            { field: 'ammountDueInAdvance', header: 'Amount Due In Advance', style: 'min-width: 190px', isSort: true },
+            { field: 'amountDuePast', header: 'Amount Due Past', style: 'min-width: 180px', isSort: true },
+            { field: 'amountPaid', header: 'Amount Paid', style: 'min-width: 130px', isSort: true },
+            { field: 'amountPaidDate', header: 'Amount Paid Date', style: 'min-width: 180px', isSort: true },
         ];
 
         this.statuses = [

@@ -1,6 +1,7 @@
 import { Component, ElementRef, ViewChild } from '@angular/core';
 import { MenuItem } from 'primeng/api';
 import { LayoutService } from "./service/app.layout.service";
+import { AuthService } from '../auth/auth.service';
 
 @Component({
     selector: 'app-topbar',
@@ -16,23 +17,11 @@ export class AppTopBarComponent {
 
     @ViewChild('topbarmenu') menu!: ElementRef;
 
-    constructor(public layoutService: LayoutService) { 
+    constructor(public layoutService: LayoutService, private authService: AuthService) { 
         this.menuItems = [
             {
-                label: 'Save', icon: 'pi pi-fw pi-check'
-            },
-            {
-                label: 'Update', icon: 'pi pi-fw pi-refresh'
-            },
-            {
-                label: 'Delete', icon: 'pi pi-fw pi-trash'
-            },
-            {
-                separator: true
-            },
-            {
-                label: 'Home', icon: 'pi pi-fw pi-home'
-            },
+                label: 'Logout', icon: 'pi pi-fw pi-sign-out', command: () => this.authService.logout(),
+            }
         ];
     }
 }
