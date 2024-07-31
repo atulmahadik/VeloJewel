@@ -43,7 +43,7 @@ export class LoginComponent {
            if (this.authService.login(username, password)) {
             this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Login SuccessFull', life: 3000 });
             // Navigate to the ProductListComponent upon successful login
-            this.router.navigate(['/customer']);
+            this.router.navigate(['/home']);
           } else {
             // Handle authentication error (show error message, etc.)
             this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Please enter valid login details Email - vjtest1 and Password - vjtest1', life: 3000 });

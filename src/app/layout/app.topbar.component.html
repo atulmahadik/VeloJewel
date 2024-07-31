@@ -1,5 +1,5 @@
 <div class="layout-topbar">
-    <a class="layout-topbar-logo" routerLink="/customer">
+    <a class="layout-topbar-logo" routerLink="/home">
         <!-- <img src="assets/layout/images/{{layoutService.config().colorScheme === 'light' ? 'logo-dark' : 'logo-white'}}.svg" alt="logo"> -->
         <img src="assets/demo/images/login/velojwellogo.png" alt="logo">
         <span>Velo Jewel</span>
@@ -19,7 +19,7 @@
             <span>Calendar</span>
         </button> -->
         <p-menu #menu [popup]="true" [model]="menuItems"></p-menu>
-        <button class="p-link layout-topbar-button" (click)="menu.toggle($event)" >
+        <button class="p-link layout-topbar-button" pButton (click)="menu.toggle($event)" >
             <i class="pi pi-user"></i>
             <span>Profile</span>
         </button>
