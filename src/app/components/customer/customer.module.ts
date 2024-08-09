@@ -16,6 +16,8 @@ import { InputNumberModule } from 'primeng/inputnumber';
 import { DialogModule } from 'primeng/dialog';
 import { CustomerRoutingModule } from './customer-routing.module';
 import { CustomerComponent } from './customer.component';
+import { CalendarModule } from 'primeng/calendar';
+
 
 @NgModule({
     imports: [
@@ -34,7 +36,8 @@ import { CustomerComponent } from './customer.component';
         DropdownModule,
         RadioButtonModule,
         InputNumberModule,
-        DialogModule
+        DialogModule,
+        CalendarModule
     ],
     declarations: [CustomerComponent]
 })

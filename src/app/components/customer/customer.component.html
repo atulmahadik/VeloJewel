@@ -16,32 +16,56 @@
                 </ng-template>
             </p-toolbar> -->
 
-            <p-table #dt [value]="customers"  [columns]="cols" [globalFilterFields]="['name','country.name','representative.name','status']" scrollDirection="both" [scrollable]="true" scrollHeight="500px" styleClass="mt-3" responsiveLayout="scroll" [resizableColumns]="true" 
-            styleClass="p-datatable-gridlines" 
-            [tableStyle]="{'min-width': '50rem'}">
+            <p-table #dt [value]="customers" [columns]="cols"
+                [globalFilterFields]="['name','country.name','representative.name','status']" scrollDirection="both"
+                [scrollable]="true" scrollHeight="500px" styleClass="mt-3" responsiveLayout="scroll"
+                [resizableColumns]="true" styleClass="p-datatable-gridlines" [tableStyle]="{'min-width': '50rem'}">
                 <ng-template pTemplate="caption">
-                    <div class="flex flex-column md:flex-row md:justify-content-between md:align-items-center" style="text-align: left;">
-                        <!-- <h5 class="m-0">Manage Products</h5> -->
+                    <!-- <div class="flex flex-column md:flex-row md:justify-content-between md:align-items-center" style="text-align: left;"> -->
+                    <!-- <h5 class="m-0">Manage Products</h5> -->
+                    <div class="flex justify-content-between">
                         <span class="block mt-2 md:mt-0 p-input-icon-left">
                             <i class="pi pi-search"></i>
-                            <input pInputText type="text" (input)="onGlobalFilter(dt, $event)" placeholder="Search..."  class="w-full sm:w-auto"/>
+                            <input pInputText type="text" (input)="onGlobalFilter(dt, $event)" placeholder="Search..."
+                                class="w-full sm:w-auto" />
                         </span>
-                        <!-- <button pButton pRipple label="New" icon="pi pi-plus" class="p-button-success mr-2" (click)="openNew()"></button> -->
+                        <button pButton pRipple label="Add Customer" icon="pi pi-plus" class="p-button-success mr-2"
+                            (click)="openNew()"></button>
                         <!-- <button pButton pRipple label="Export" icon="pi pi-upload" class="p-button-help" (click)="dt.exportCSV()"></button> -->
                     </div>
-                    
+
                 </ng-template>
                 <ng-template pTemplate="header" let-columns>
                     <tr>
-                        <th *ngFor="let col of columns" [pSortableColumn]="col.field" [pSortableColumnDisabled]="!col.isSort">
+                        <th *ngFor="let col of columns" [pSortableColumn]="col.field"
+                            [pSortableColumnDisabled]="!col.isSort">
                             {{ col.header }} <p-sortIcon *ngIf="col.isSort" [field]="col.field" />
                         </th>
+                        <th alignFrozen="right" pFrozenColumn>Actions</th>
                     </tr>
                 </ng-template>
-                <ng-template pTemplate="body" let-rowData let-columns="columns">
+                <ng-template pTemplate="body" let-customer let-columns="columns">
                     <tr>
                         <td *ngFor="let col of columns">
-                            {{ rowData[col.field] }}
+                            <span *ngIf="col.field !== 'subscriptionDate' && col.field !== 'renewalDate' && col.field !== 'amountPaidDate'">
+                                {{customer[col.field] }}</span>
+                            <span *ngIf="col.field === 'subscriptionDate' || col.field === 'renewalDate' || col.field === 'amountPaidDate'">
+                                {{customer[col.field] ? (customer[col.field] | date: 'MM/dd/yyyy') : ''}}</span>
+                        </td>
+                        <td alignFrozen="right" pFrozenColumn>
+                            <!-- <div class="flex">
+                                                        <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-success mr-2" (click)="editProduct(customer)"></button>
+                                                        <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning" (click)="deleteProduct(customer)"></button>
+                                                    </div> -->
+                            <div class="flex align-items-center justify-content-center gap-2">
+                                <button pButton pRipple type="button" icon="pi pi-pencil"
+                                    (click)="editProduct(customer)" class="p-button-rounded p-button-text">
+                                </button>
+                                <button pButton pRipple type="button" icon="pi pi-times"
+                                    (click)="deleteProduct(customer)"
+                                    class="p-button-rounded p-button-text p-button-danger">
+                                </button>
+                            </div>
                         </td>
                     </tr>
                 </ng-template>
@@ -53,90 +77,143 @@
             </p-table>
         </div>
 
-        <p-dialog [(visible)]="customerDialog" [style]="{width: '450px'}" header="Product Details" [modal]="true" class="p-fluid">
+        <p-dialog [(visible)]="customerDialog"  [draggable]="false" [style]="{ width: '50rem' }" 
+        [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }"  header="Customer Details" [modal]="true"
+            class="p-fluid">
+            <!-- [style]="{width: '750px'}" -->
             <ng-template pTemplate="content">
-                <img [src]="'assets/demo/images/product/' + product.image" [alt]="customer.image" width="150" class="mt-0 mx-auto mb-5 block shadow-2" *ngIf="customer.image">
-                <div class="field">
-                    <label for="name">Name</label>
-                    <input type="text" pInputText id="name" [(ngModel)]="customer.name" required autofocus [ngClass]="{'ng-invalid ng-dirty' : submitted && !product.name}"/>
-                    <small class="ng-dirty ng-invalid" *ngIf="submitted && !product.name">Name is required.</small>
-                </div>
-                <div class="field">
-                    <label for="description">Description</label>
-                    <textarea id="description" pInputTextarea [(ngModel)]="customer.description" required rows="3" cols="20"></textarea>
-                </div>
-                <div class="field">
-                    <label for="status">Inventory Status</label>
-                    <p-dropdown [(ngModel)]="customer.inventoryStatus" inputId="inventoryStatus" optionValue="label" [options]="statuses" placeholder="Select">
-                        <ng-template pTemplate="selectedItem">
-                            <span *ngIf="customer && product.inventoryStatus" [class]="'product-badge status-' + product.inventoryStatus.toString().toLowerCase()">{{product.inventoryStatus}}</span>
-                        </ng-template>
-                        <ng-template let-option pTemplate="item">
-                            <span [class]="'product-badge status-' + option.value">{{option.label}}</span>
-                        </ng-template>
-                    </p-dropdown>
-                </div>
-
-                <div class="field">
-                    <label class="mb-3">Category</label>
-                    <div class="formgrid grid">
-                        <div class="field-radiobutton col-6">
-                            <p-radioButton id="category1" name="category" value="Accessories" [(ngModel)]="customer.category"></p-radioButton>
-                            <label for="category1">Accessories</label>
-                        </div>
-                        <div class="field-radiobutton col-6">
-                            <p-radioButton id="category2" name="category" value="Clothing" [(ngModel)]="customer.category"></p-radioButton>
-                            <label for="category2">Clothing</label>
-                        </div>
-                        <div class="field-radiobutton col-6">
-                            <p-radioButton id="category3" name="category" value="Electronics" [(ngModel)]="customer.category"></p-radioButton>
-                            <label for="category3">Electronics</label>
-                        </div>
-                        <div class="field-radiobutton col-6">
-                            <p-radioButton id="category4" name="category" value="Fitness" [(ngModel)]="customer.category"></p-radioButton>
-                            <label for="category4">Fitness</label>
-                        </div>
-                    </div>
-                </div>
-
                 <div class="formgrid grid">
                     <div class="field col">
-                        <label for="price">Price</label>
-                        <p-inputNumber id="price" [(ngModel)]="customer.price" mode="currency" currency="USD" locale="en-US"></p-inputNumber>
+                        <label for="number">Customer No.</label>
+                        <input type="text" pInputText id="number" [(ngModel)]="customer.number" required autofocus
+                            [ngClass]="{'ng-invalid ng-dirty' : submitted && !customer.number}" />
+                        <small class="ng-dirty ng-invalid" *ngIf="submitted && !customer.number">Customer No is
+                            required.</small>
                     </div>
                     <div class="field col">
-                        <label for="quantity">Quantity</label>
-                        <p-inputNumber id="quantity" [(ngModel)]="customer.quantity"></p-inputNumber>
+                        <label for="name">Name</label>
+                        <input type="text" pInputText id="name" [(ngModel)]="customer.name" required autofocus
+                            [ngClass]="{'ng-invalid ng-dirty' : submitted && !customer.name}" />
+                        <small class="ng-dirty ng-invalid" *ngIf="submitted && !customer.name">Name is required.</small>
+                    </div>
+                </div>
+                <div class="formgrid grid">
+                    <div class="field col">
+                        <label for="mobileno">Mobile Number</label>
+                        <input type="text" pInputText id="mobileno" [(ngModel)]="customer.mobileno" required autofocus
+                            [ngClass]="{'ng-invalid ng-dirty' : submitted && !customer.mobileno}" minlength="10" maxlength="10"/>
+                        <small class="ng-dirty ng-invalid" *ngIf="submitted && !customer.mobileno">Mobile Number is
+                            required.</small>
+                    </div>
+                    <div class="field col">
+                        <label for="address">Address</label>
+                        <textarea id="address" pInputTextarea [(ngModel)]="customer.address" [autoResize]="true"
+                            required rows="3" maxlength="100" cols="20"></textarea>
+                    </div>
+                </div>
+                <div class="formgrid grid">
+                    <div class="field col">
+                        <label for="subscriptionDate">Subscription Date</label>
+                        <p-calendar [(ngModel)]="customer.subscriptionDate" [showIcon]="true" inputId="subscriptionDate"
+                            required [ngClass]="{'ng-invalid ng-dirty' : submitted && !customer.subscriptionDate}" />
+                        <small class="ng-dirty ng-invalid" *ngIf="submitted && !customer.subscriptionDate">Subscription
+                            Date is required.</small>
+                    </div>
+                    <div class="field col">
+                        <label for="renewalDate">Renewal Date</label>
+                        <p-calendar [(ngModel)]="customer.renewalDate" [showIcon]="true" inputId="renewalDate" required
+                            [ngClass]="{'ng-invalid ng-dirty' : submitted && !customer.renewalDate}" />
+                        <small class="ng-dirty ng-invalid" *ngIf="submitted && !customer.renewalDate">Renewal Date is
+                            required.</small>
+                    </div>
+                </div>
+                <div class="formgrid grid">
+                    <div class="field col">
+                        <label for="callReason">Call Reason</label>
+                        <input type="text" pInputText id="callReason" [(ngModel)]="customer.callReason" required
+                            autofocus [ngClass]="{'ng-invalid ng-dirty' : submitted && !customer.callReason}" />
+                        <small class="ng-dirty ng-invalid" *ngIf="submitted && !customer.callReason">Name is
+                            required.</small>
+                    </div>
+                    <div class="field col">
+                        <label for="refferedBy">Reffered By</label>
+                        <input type="text" pInputText id="refferedBy" [(ngModel)]="customer.refferedBy" required
+                            autofocus [ngClass]="{'ng-invalid ng-dirty' : submitted && !customer.refferedBy}" />
+                        <small class="ng-dirty ng-invalid" *ngIf="submitted && !customer.refferedBy">Name is
+                            required.</small>
+                    </div>
+                    <div class="field col">
+                        <label for="commision">Commision</label>
+                        <p-inputNumber [(ngModel)]="customer.commision" [max]="100" inputId="commision" suffix="%" />
+                        <small class="ng-dirty ng-invalid" *ngIf="submitted && !customer.commision">Name is
+                            required.</small>
+                    </div>
+                </div>
+                <div class="formgrid grid">
+                    <div class="field col">
+                        <label for="ammountDueInAdvance">Amount Due(In Advance)</label>
+                        <p-inputNumber [(ngModel)]="customer.ammountDueInAdvance" inputId="ammountDueInAdvance"
+                            mode="decimal" locale="en-IN" [minFractionDigits]="2" />
+                        <small class="ng-dirty ng-invalid" *ngIf="submitted && !customer.ammountDueInAdvance">Name is
+                            required.</small>
+                    </div>
+                    <div class="field col">
+                        <label for="amountDuePast">Amount Due(Past)</label>
+                        <p-inputNumber [(ngModel)]="customer.amountDuePast" inputId="amountDuePast" mode="decimal"
+                            locale="en-IN" [minFractionDigits]="2" />
+                        <small class="ng-dirty ng-invalid" *ngIf="submitted && !customer.amountDuePast">Name is
+                            required.</small>
+                    </div>
+                </div>
+                <div class="formgrid grid">
+                    <div class="field col">
+                        <label for="amountPaid">Amount Paid</label>
+                        <p-inputNumber [(ngModel)]="customer.amountPaid" inputId="amountPaid" mode="decimal"
+                            locale="en-IN" [minFractionDigits]="2" />
+                        <small class="ng-dirty ng-invalid" *ngIf="submitted && !customer.amountPaid">Name is
+                            required.</small>
+                    </div>
+                    <div class="field col">
+                        <label for="amountPaidDate">Amount Paid Date</label>
+                        <p-calendar [(ngModel)]="customer.amountPaidDate" [showIcon]="true" inputId="amountPaidDate" />
+                        <small class="ng-dirty ng-invalid" *ngIf="submitted && !customer.amountPaidDate">Name is
+                            required.</small>
                     </div>
                 </div>
             </ng-template>
 
             <ng-template pTemplate="footer">
-                <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text" (click)="hideDialog()"></button>
-                <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text" (click)="saveProduct()"></button>
+                <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text"
+                    (click)="hideDialog()"></button>
+                <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text"
+                    (click)="saveCustomer()"></button>
             </ng-template>
         </p-dialog>
 
-        <p-dialog [(visible)]="deleteProductDialog" header="Confirm" [modal]="true" [style]="{width:'450px'}">
+        <p-dialog [(visible)]="deleteProductDialog" [draggable]="false" header="Confirm" [modal]="true" [style]="{width:'450px'}">
             <div class="flex align-items-center justify-content-center">
                 <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem"></i>
-                <span *ngIf="customer">Are you sure you want to delete <b>{{customer.name}}</b>?</span>
+                <span *ngIf="customer">Are you sure you want to delete customer <b>{{customer.name}}</b>?</span>
             </div>
             <ng-template pTemplate="footer">
-                <button pButton pRipple icon="pi pi-times" class="p-button-text" label="No" (click)="deleteProductDialog = false"></button>
-                <button pButton pRipple icon="pi pi-check" class="p-button-text" label="Yes" (click)="confirmDelete()"></button>
+                <button pButton pRipple icon="pi pi-times" class="p-button-text" label="No"
+                    (click)="deleteProductDialog = false"></button>
+                <button pButton pRipple icon="pi pi-check" class="p-button-text" label="Yes"
+                    (click)="confirmDelete()"></button>
             </ng-template>
         </p-dialog>
 
-        <p-dialog [(visible)]="deleteProductsDialog" header="Confirm" [modal]="true" [style]="{width:'450px'}">
+        <!-- <p-dialog [(visible)]="deleteProductsDialog" [draggable]="false" header="Confirm" [modal]="true" [style]="{width:'450px'}">
             <div class="flex align-items-center justify-content-center">
                 <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem"></i>
                 <span>Are you sure you want to delete selected products?</span>
             </div>
             <ng-template pTemplate="footer">
-                <button pButton pRipple icon="pi pi-times" class="p-button-text" label="No" (click)="deleteProductsDialog = false"></button>
-                <button pButton pRipple icon="pi pi-check" class="p-button-text" label="Yes" (click)="confirmDeleteSelected()"></button>
+                <button pButton pRipple icon="pi pi-times" class="p-button-text" label="No"
+                    (click)="deleteProductsDialog = false"></button>
+                <button pButton pRipple icon="pi pi-check" class="p-button-text" label="Yes"
+                    (click)="confirmDeleteSelected()"></button>
             </ng-template>
-        </p-dialog>
+        </p-dialog> -->
     </div>
 </div>

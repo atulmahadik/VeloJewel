@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Customer } from 'src/app/demo/api/product';
+import { Customer } from './customer';
 import { MessageService } from 'primeng/api';
 import { Table } from 'primeng/table';
 import { CustomerService } from './customer.service';
@@ -26,14 +26,21 @@ export class CustomerComponent implements OnInit {
 
     cols: any[] = [];
 
-    statuses: any[] = [];
-
     rowsPerPageOptions = [5, 10, 20];
 
     constructor(private productService: CustomerService, private messageService: MessageService) { }
 
     ngOnInit() {
-        this.productService.getCustomers().then(data => this.customers = data);
+        this.productService.getCustomers().then(data => {
+            this.customers = data;
+            this.customers.forEach(customer => {
+                customer.id = this.createId();
+                customer.number = this.createId();
+                customer.subscriptionDate = new Date();
+                customer.renewalDate = new Date();
+                customer.amountPaidDate = new Date();
+            });
+        });
 
         // this.cols = [
         //     { field: 'name', header: 'Name'},
@@ -52,23 +59,17 @@ export class CustomerComponent implements OnInit {
 
         this.cols = [
             { field: 'name', header: 'Name', style: 'min-width: 130px', isSort: true },
-            { field: 'address', header: 'Address', style: 'min-width: 130px', isSort: true },
-            { field: 'mobileno', header: 'Mobile No', style: 'min-width: 130px', isSort: true },
+            { field: 'address', header: 'Address', style: 'min-width: 130px', isSort: false },
+            { field: 'mobileno', header: 'Mobile No', style: 'min-width: 130px', isSort: false },
             { field: 'subscriptionDate', header: 'Subscription Date', style: 'min-width: 150px', isSort: true },
             { field: 'renewalDate', header: 'Renewal Date', style: 'min-width: 130px', isSort: true },
-            { field: 'callReason', header: 'Call Reason', style: 'min-width: 130px', isSort: true },
-            { field: 'refferedBy', header: 'Reffered By', style: 'min-width: 130px', isSort: true },
-            { field: 'commision', header: 'Commision', style: 'min-width: 130px', isSort: true },
-            { field: 'ammountDueInAdvance', header: 'Amount Due In Advance', style: 'min-width: 190px', isSort: true },
-            { field: 'amountDuePast', header: 'Amount Due Past', style: 'min-width: 180px', isSort: true },
+            { field: 'callReason', header: 'Call Reason', style: 'min-width: 130px', isSort: false },
+            { field: 'refferedBy', header: 'Reffered By', style: 'min-width: 130px', isSort: false },
+            { field: 'commision', header: 'Commision', style: 'min-width: 130px', isSort: false },
+            { field: 'ammountDueInAdvance', header: 'Amount Due(In Advance)', style: 'min-width: 190px', isSort: true },
+            { field: 'amountDuePast', header: 'Amount Due(Past)', style: 'min-width: 180px', isSort: true },
             { field: 'amountPaid', header: 'Amount Paid', style: 'min-width: 130px', isSort: true },
             { field: 'amountPaidDate', header: 'Amount Paid Date', style: 'min-width: 180px', isSort: true },
-        ];
-
-        this.statuses = [
-            { label: 'INSTOCK', value: 'instock' },
-            { label: 'LOWSTOCK', value: 'lowstock' },
-            { label: 'OUTOFSTOCK', value: 'outofstock' }
         ];
     }
 
@@ -111,29 +112,24 @@ export class CustomerComponent implements OnInit {
         this.submitted = false;
     }
 
-    saveProduct() {
+    saveCustomer() {
         this.submitted = true;
+        if (this.customer.name?.trim()) {
+            if (this.customer.id) {
+                // @ts-ignore
+                this.customers[this.findIndexById(this.customer.id)] = this.customer;
+                this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Customer Updated', life: 3000 });
+            } else {
+                this.customer.id = this.createId();
+                // @ts-ignore
+                this.customers.push(this.customer);
+                this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Customer Created', life: 3000 });
+            }
 
-        // if (this.customer.name?.trim()) {
-        //     if (this.customer.id) {
-        //         // @ts-ignore
-        //         this.customer.inventoryStatus = this.customer.inventoryStatus.value ? this.customer.inventoryStatus.value : this.customer.inventoryStatus;
-        //         this.customers[this.findIndexById(this.customer.id)] = this.customer;
-        //         this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Customer Updated', life: 3000 });
-        //     } else {
-        //         this.customer.id = this.createId();
-        //         this.customer.code = this.createId();
-        //         this.customer.image = 'customer-placeholder.svg';
-        //         // @ts-ignore
-        //         this.customer.inventoryStatus = this.customer.inventoryStatus ? this.customer.inventoryStatus.value : 'INSTOCK';
-        //         this.customers.push(this.customer);
-        //         this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Customer Created', life: 3000 });
-        //     }
-
-        //     this.customers = [...this.customers];
-        //     this.customerDialog = false;
-        //     this.customer = {};
-        // }
+            this.customers = [...this.customers];
+            this.customerDialog = false;
+            this.customer = {};
+        }
     }
 
     findIndexById(id: string): number {
@@ -148,13 +144,14 @@ export class CustomerComponent implements OnInit {
         return index;
     }
 
-    createId(): string {
-        let id = '';
-        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-        for (let i = 0; i < 5; i++) {
-            id += chars.charAt(Math.floor(Math.random() * chars.length));
-        }
-        return id;
+    createId(): any {
+        // let id = '';
+        // const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        // for (let i = 0; i < 5; i++) {
+        //     id += chars.charAt(Math.floor(Math.random() * chars.length));
+        // }
+        // return id;
+        return Math.floor((Math.random() * 10000) + 1)
     }
 
     onGlobalFilter(table: Table, event: Event) {

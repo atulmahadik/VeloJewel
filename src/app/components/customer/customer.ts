@@ -4,13 +4,13 @@ export interface Customer {
     name?: string;
     address?: string;
     mobileno?: string;
-    subscriptionDate?: string;
-    renewalDate?: string;
+    subscriptionDate?: Date;
+    renewalDate?: Date;
     callReason?: string;
     refferedBy?: string;
     commision?: number;
     ammountDueInAdvance?: number;
     amountDuePast?: number;
     amountPaid?: number;
-    amountPaidDate?: string;
+    amountPaidDate?: Date;
 }

@@ -1,0 +1,27 @@
+Login
+Sequence if the table
+Cus no
+Cus id
+Name
+Address
+Mo no
+Subscription date
+Renual date
+Call reason
+Refered by
+Commission 
+Amount due (in advance )
+Amount due (past)
+Amount paid
+Amount paid date
+Transaction details
+Transaction details if paid back
+
+Login - basic
+There should be search option where I can search any customer and get its details
+Filter options like sort by latest cus/ oldest cus, high paying customers 
+High reference costumers
+Due customers 
+Soon to b renewed customers etc 
+Dates should b non editable to the employee but only editable to me
+Incase u do not understand direct call
